@@ -23,5 +23,6 @@ spec:
               mountPath: /app/data
       volumes:
         - name: data
-          persistentVolumeClaim:
-            claimName: uptime-kuma-data
+          hostPath:
+            path: /opt/uptime-kuma-data
+            type: DirectoryOrCreate
