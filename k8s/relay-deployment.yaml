@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uptime-whatsapp-relay
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uptime-whatsapp-relay
+  template:
+    metadata:
+      labels:
+        app: uptime-whatsapp-relay
+    spec:
+      containers:
+        - name: uptime-whatsapp-relay
+          image: localhost:5000/uptime-whatsapp-relay:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          env:
+            - name: EVOLUTION_BASE_URL
+              value: "https://evolution-api.conectadoc.com.br"
+            - name: EVOLUTION_INSTANCE
+              value: "CONECTADOC"
+            - name: ALERT_NUMBER
+              value: "5541996907709"
+            - name: EVOLUTION_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: evolution-api-key
+                  key: apikey
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 30
